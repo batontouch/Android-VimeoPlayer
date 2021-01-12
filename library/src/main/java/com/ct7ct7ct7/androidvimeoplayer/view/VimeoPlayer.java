@@ -12,6 +12,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.ct7ct7ct7.androidvimeoplayer.listeners.VimeoPlayerReadyListener;
 import com.ct7ct7ct7.androidvimeoplayer.model.PlayerState;
 import com.ct7ct7ct7.androidvimeoplayer.model.TextTrack;
@@ -185,7 +188,12 @@ public class VimeoPlayer extends WebView {
 
 
     @SuppressLint("SetJavaScriptEnabled")
-    private void initWebView(boolean enabledCache, JsBridge jsBridge, VimeoOptions vimeoOptions, int videoId, String hashKey, String baseUrl) {
+    private void initWebView(boolean enabledCache,
+                             @NonNull JsBridge jsBridge,
+                             @NonNull VimeoOptions vimeoOptions,
+                             int videoId,
+                             @Nullable String hashKey,
+                             @Nullable String baseUrl) {
         this.getSettings().setJavaScriptEnabled(true);
         this.getSettings().setSupportMultipleWindows(false);
         this.getSettings().setMediaPlaybackRequiresUserGesture(false);
@@ -211,6 +219,7 @@ public class VimeoPlayer extends WebView {
         if (hashKey != null) {
             videoUrl += "/" + hashKey;
         }
+        Log.d("VimeoPlayer", "url: " + videoUrl);
 
         final String formattedString = unformattedString
                 .replace("<VIDEO_URL>", videoUrl)
@@ -224,6 +233,7 @@ public class VimeoPlayer extends WebView {
                 .replace("<QUALITY>", vimeoOptions.quality)
                 .replace("<CONTROLS>", String.valueOf(!vimeoOptions.hideOriginControls));
 
+        //Log.d("VideoPlayer", formattedString);
         this.loadDataWithBaseURL(baseUrl, formattedString, "text/html", "utf-8", null);
 
         // if the video's thumbnail is not in memory, show a black screen

@@ -2,6 +2,7 @@ package com.ct7ct7ct7.androidvimeoplayer.utils;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 import com.ct7ct7ct7.androidvimeoplayer.listeners.VimeoPlayerErrorListener;
@@ -85,6 +86,7 @@ public class JsBridge {
 
     @JavascriptInterface
     public void sendError(final String message, final String method, final String name) {
+        Log.d("VimeoPlayer", "JsBridge:error " + message + " /method: " + method + " /name: " + name);
         for (final VimeoPlayerErrorListener errorListener : errorListeners) {
             mainThreadHandler.post(new Runnable() {
                 @Override
@@ -112,6 +114,7 @@ public class JsBridge {
 
     @JavascriptInterface
     public void sendInitFailed() {
+        Log.d("VimeoPlayer", "JsBridge initFailed");
         for (final VimeoPlayerReadyListener readyListener : readyListeners) {
             mainThreadHandler.post(new Runnable() {
                 @Override

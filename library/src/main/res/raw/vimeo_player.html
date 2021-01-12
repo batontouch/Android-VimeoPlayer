@@ -29,7 +29,7 @@
 
     <body>
         <div class="flexbox">
-            <div id="player"></div>
+            <div id="player_container"></div>
         </div>
     </body>
 
@@ -54,13 +54,13 @@
             quality: '<QUALITY>',
             portrait: true,
             byline: true,
-            speed: true,
+            speed: false,
             transparent: true,
             width: w,
             height: h,
             controls: <CONTROLS>
         };
-        player = new Vimeo.Player('player', options);
+        player = new Vimeo.Player('player_container', options);
 
         player.on('timeupdate', function (data) {
             jsBridge.sendVideoCurrentTime(data.seconds)
@@ -114,7 +114,7 @@
         });
 
 
-        return "called: initVimeoPlayer";
+        return "js: initVimeoPlayer";
     }
 
     function seekTo(startSeconds) {

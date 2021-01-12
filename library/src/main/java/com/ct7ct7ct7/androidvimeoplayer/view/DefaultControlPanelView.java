@@ -34,20 +34,20 @@ import okhttp3.Response;
 
 @SuppressWarnings("WeakerAccess")
 public class DefaultControlPanelView {
-    private View vimeoPanelView;
-    private View vimeoShadeView;
-    private ImageView vimeoMenuButton;
-    private ImageView vimeoFullscreenButton;
-    private SeekBar vimeoSeekBar;
-    private TextView vimeoCurrentTimeTextView;
-    private ImageView vimeoThumbnailImageView;
-    private ImageView vimeoPlayButton;
-    private ImageView vimeoPauseButton;
-    private ImageView vimeoReplayButton;
-    private TextView vimeoTitleTextView;
-    private View controlsRootView;
+    private final View vimeoPanelView;
+    private final View vimeoShadeView;
+    private final ImageView vimeoMenuButton;
+    private final ImageView vimeoFullscreenButton;
+    private final SeekBar vimeoSeekBar;
+    private final TextView vimeoCurrentTimeTextView;
+    private final ImageView vimeoThumbnailImageView;
+    private final ImageView vimeoPlayButton;
+    private final ImageView vimeoPauseButton;
+    private final ImageView vimeoReplayButton;
+    private final TextView vimeoTitleTextView;
+    private final View controlsRootView;
     private boolean ended = false;
-    private VimeoPlayerMenu vimeoPlayerMenu;
+    private final VimeoPlayerMenu vimeoPlayerMenu;
 
     public DefaultControlPanelView(final VimeoPlayerView vimeoPlayerView) {
         View defaultControlPanelView = View.inflate(vimeoPlayerView.getContext(), R.layout.view_default_control_panel, vimeoPlayerView);
@@ -294,4 +294,5 @@ public class DefaultControlPanelView {
             }
         }.execute();
     }
+
 }

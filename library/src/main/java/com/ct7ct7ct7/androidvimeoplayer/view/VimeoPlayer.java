@@ -299,12 +299,12 @@ public class VimeoPlayer extends WebView {
         }
         resetReadyListener = new VimeoPlayerReadyListener() {
             @Override
-            public void onReady(String title, float duration, TextTrack[] textTrackArray) {
+            public void onReady(VimeoPlayer player, String title, float duration, TextTrack[] textTrackArray) {
                 seekTo(playAt);
             }
 
             @Override
-            public void onInitFailed() {
+            public void onInitFailed(VimeoPlayer player) {
 
             }
         };

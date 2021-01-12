@@ -35,9 +35,9 @@ public class VimeoPlayerView extends FrameLayout implements LifecycleObserver {
     public VimeoOptions defaultOptions;
     public int defaultColor = Color.rgb(0, 172, 240);
     public float defaultAspectRatio = 16f / 9;
-    private JsBridge jsBridge;
-    private VimeoPlayer vimeoPlayer;
-    private ProgressBar progressBar;
+    private final JsBridge jsBridge;
+    private final VimeoPlayer vimeoPlayer;
+    private final ProgressBar progressBar;
     private DefaultControlPanelView defaultControlPanelView;
     private String title;
     private int videoId;
@@ -45,7 +45,6 @@ public class VimeoPlayerView extends FrameLayout implements LifecycleObserver {
     private String baseUrl;
     private boolean played = false;
     private TextTrack[] textTracks;
-
 
     public VimeoPlayerView(Context context) {
         this(context, null);
@@ -58,10 +57,15 @@ public class VimeoPlayerView extends FrameLayout implements LifecycleObserver {
     public VimeoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        this.jsBridge = new JsBridge();
+        this.vimeoPlayer = new VimeoPlayer(context);
+        FrameLayout.LayoutParams vimeoPlayerLp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        vimeoPlayerLp.gravity = Gravity.CENTER;
+        this.addView(vimeoPlayer, vimeoPlayerLp);
+
+        this.jsBridge = new JsBridge(vimeoPlayer);
         jsBridge.addReadyListener(new VimeoPlayerReadyListener() {
             @Override
-            public void onReady(String t, float duration, TextTrack[] textTrackArray) {
+            public void onReady(VimeoPlayer player, String t, float duration, TextTrack[] textTrackArray) {
                 title = t;
                 textTracks = textTrackArray;
                 progressBar.setVisibility(View.GONE);
@@ -74,17 +78,12 @@ public class VimeoPlayerView extends FrameLayout implements LifecycleObserver {
             }
 
             @Override
-            public void onInitFailed() {
+            public void onInitFailed(VimeoPlayer player) {
                 progressBar.setVisibility(View.GONE);
             }
         });
 
         defaultOptions = generateDefaultVimeoOptions(context, attrs);
-        this.vimeoPlayer = new VimeoPlayer(context);
-        FrameLayout.LayoutParams vimeoPlayerLp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        vimeoPlayerLp.gravity = Gravity.CENTER;
-        this.addView(vimeoPlayer, vimeoPlayerLp);
-
 
         if (!defaultOptions.hidePlayerViewControls) {
             defaultControlPanelView = new DefaultControlPanelView(this);

@@ -1,6 +1,5 @@
 package com.ct7ct7ct7.androidvimeoplayer.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -99,7 +98,7 @@ public class DefaultControlPanelView {
 
         vimeoPlayerView.addTimeListener(new VimeoPlayerTimeListener() {
             @Override
-            public void onCurrentSecond(float second) {
+            public void onCurrentSecond(VimeoPlayer player, float second) {
                 vimeoCurrentTimeTextView.setText(Utils.formatTime(second));
                 vimeoSeekBar.setProgress((int) second);
             }
@@ -107,7 +106,7 @@ public class DefaultControlPanelView {
 
         vimeoPlayerView.addReadyListener(new VimeoPlayerReadyListener() {
             @Override
-            public void onReady(String title, float duration, TextTrack[] textTrackArray) {
+            public void onReady(VimeoPlayer player, String title, float duration, TextTrack[] textTrackArray) {
                 vimeoSeekBar.setMax((int) duration);
                 vimeoTitleTextView.setText(title);
                 vimeoPanelView.setVisibility(View.VISIBLE);
@@ -116,14 +115,14 @@ public class DefaultControlPanelView {
             }
 
             @Override
-            public void onInitFailed() {
+            public void onInitFailed(VimeoPlayer player) {
 
             }
         });
 
         vimeoPlayerView.addStateListener(new VimeoPlayerStateListener() {
             @Override
-            public void onPlaying(float duration) {
+            public void onPlaying(VimeoPlayer player, float duration) {
                 ended = false;
                 vimeoSeekBar.setVisibility(View.VISIBLE);
                 vimeoPanelView.setBackgroundColor(Color.TRANSPARENT);
@@ -135,7 +134,7 @@ public class DefaultControlPanelView {
             }
 
             @Override
-            public void onPaused(float seconds) {
+            public void onPaused(VimeoPlayer player, float seconds) {
                 if (ended) {
                     vimeoPanelView.setBackgroundColor(Color.BLACK);
                     vimeoReplayButton.setVisibility(View.VISIBLE);
@@ -149,7 +148,7 @@ public class DefaultControlPanelView {
             }
 
             @Override
-            public void onEnded(float duration) {
+            public void onEnded(VimeoPlayer player, float duration) {
                 ended = true;
                 vimeoThumbnailImageView.setVisibility(View.VISIBLE);
                 showControls(false);

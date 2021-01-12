@@ -89,19 +89,19 @@ public class VimeoPlayerActivity extends AppCompatActivity {
         vimeoPlayerView.initialize(true, videoId, hashKey, baseUrl);
         vimeoPlayerView.addReadyListener(new VimeoPlayerReadyListener() {
             @Override
-            public void onReady(String title, float duration, TextTrack[] textTrackArray) {
+            public void onReady(VimeoPlayer player, String title, float duration, TextTrack[] textTrackArray) {
                 vimeoPlayerView.seekTo(startAt);
                 vimeoPlayerView.playTwoStage();
             }
 
             @Override
-            public void onInitFailed() {
+            public void onInitFailed(VimeoPlayer player) {
 
             }
         });
         vimeoPlayerView.addTimeListener(new VimeoPlayerTimeListener() {
             @Override
-            public void onCurrentSecond(float second) {
+            public void onCurrentSecond(VimeoPlayer player, float second) {
                 if (second >= endAt) {
                     vimeoPlayerView.pause();
                 }

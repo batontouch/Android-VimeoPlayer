@@ -86,8 +86,8 @@
             jsBridge.sendTextTrackChange(data.kind,data.label,data.language)
         });
 
-        player.on('error', function (data) {
-            jsBridge.sendError(data.message,data.method,data.name)
+        player.on('error', function (error) {
+            jsBridge.sendError(error.toString(),"error", error.name)
         });
 
         player.ready().then(function () {
@@ -98,20 +98,23 @@
                         jsBridge.sendReady(title,duration,tracksJSON)
                     }).catch(function(error) {
                         jsBridge.sendInitFailed()
-                        jsBridge.sendError('Init failed','init','init')
+                        jsBridge.sendError(error.toString(),'getTextTracks','ready')
                     })
                 }).catch(function(error) {
                     jsBridge.sendInitFailed()
-                    jsBridge.sendError('Init failed','init','init')
+                    jsBridge.sendError(error.toString(),'getVideoTitle','ready')
                 })
             }).catch(function(error) {
                 jsBridge.sendInitFailed()
-                jsBridge.sendError('Init failed','init','init')
+                jsBridge.sendError(error.toString(),'getDuration','ready')
             })
         }).catch(function (error) {
             jsBridge.sendInitFailed()
-            jsBridge.sendError('Init failed','init','init')
+            jsBridge.sendError(error.toString(),'ready','ready')
         });
+
+
+        return "called: initVimeoPlayer";
     }
 
     function seekTo(startSeconds) {
@@ -133,11 +136,11 @@
                     jsBridge.sendReady(title,duration)
                 }).catch(function(error) {
                     jsBridge.sendInitFailed()
-                    jsBridge.sendError('Init failed','init','init')
+                    jsBridge.sendError(error.toString(),'getVideoTitle','loadVideo')
                 })
             }).catch(function(error) {
                 jsBridge.sendInitFailed()
-                jsBridge.sendError('Init failed','init','init')
+                jsBridge.sendError(error.toString(),'loadVideo','loadVideo')
             })
         })
     }
@@ -167,10 +170,10 @@
             player.pause().then(function() {
                 player.play()
             }).catch(function(error) {
-                jsBridge.sendError(data.message,data.method,data.name)
+                jsBridge.sendError(error.toString(),"pause","playTwoStage")
             })
         }).catch(function(error) {
-            jsBridge.sendError(data.message,data.method,data.name)
+            jsBridge.sendError(error.toString(),"play", "playTwoStage")
         })
     }
 
@@ -179,7 +182,7 @@
             track.language = language
             track.kind = 'captions'
         }).catch(function(error) {
-            jsBridge.sendError(error.name,error.name,error.name)
+            jsBridge.sendError(error.toString(), "enableTextTrack","setCaptions")
         })
     }
 

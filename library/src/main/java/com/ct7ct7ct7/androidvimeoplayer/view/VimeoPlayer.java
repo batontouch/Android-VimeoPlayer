@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -44,7 +45,6 @@ public class VimeoPlayer extends WebView {
     public VimeoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
-
 
     public void loadVideo(final int videoId) {
         String script = "javascript:loadVideo('" + videoId + "')";
@@ -245,7 +245,7 @@ public class VimeoPlayer extends WebView {
                 webView.evaluateJavascript("javascript:initVimeoPlayer()", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-
+                        Log.d("VimeoPlayer", value);
                     }
                 });
             }

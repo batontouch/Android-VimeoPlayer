@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,11 +30,13 @@ import com.ct7ct7ct7.androidvimeoplayer.view.menu.VimeoMenuItem;
 import com.ct7ct7ct7.androidvimeoplayer.view.menu.VimeoPlayerMenu;
 import com.google.gson.Gson;
 
+import java.lang.ref.WeakReference;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
-@SuppressWarnings("WeakerAccess")
 public class DefaultControlPanelView {
     private final View vimeoPanelView;
     private final View vimeoShadeView;
@@ -258,41 +262,59 @@ public class DefaultControlPanelView {
         vimeoSeekBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
-    @SuppressLint("StaticFieldLeak")
     protected void fetchThumbnail(final Context context, final int videoId) {
-        new AsyncTask<Void, Void, VimeoThumbnail>() {
-            @Override
-            protected VimeoThumbnail doInBackground(Void... voids) {
-                String url = "https://vimeo.com/api/oembed.json?url=https://player.vimeo.com/video/" + videoId;
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder().url(url).build();
-                VimeoThumbnail vimeoThumbnail = null;
-                try {
-                    Response response = client.newCall(request).execute();
-                    if (response.body() != null) {
-                        vimeoThumbnail = new Gson().fromJson(response.body().string(), VimeoThumbnail.class);
-                    }
-                } catch (Exception e) {
-                    Log.e(context.getPackageName(), e.toString());
-                }
-                return vimeoThumbnail;
-            }
-
-            @Override
-            protected void onPostExecute(VimeoThumbnail vimeoThumbnail) {
-                super.onPostExecute(vimeoThumbnail);
-                if (vimeoThumbnail != null && vimeoThumbnail.thumbnailUrl != null) {
-                    RequestOptions options = new RequestOptions()
-                            .priority(Priority.NORMAL)
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
-
-                    Glide.with(context)
-                            .load(vimeoThumbnail.thumbnailUrl)
-                            .apply(options)
-                            .into(vimeoThumbnailImageView);
-                }
-            }
-        }.execute();
+        new ThumbnailTask(context, vimeoThumbnailImageView, videoId).execute();
     }
 
+    static class ThumbnailTask extends AsyncTask<Void, Void, VimeoThumbnail> {
+
+        private final WeakReference<Context> weakReference;
+        private final int videoId;
+        private final WeakReference<ImageView> weakImageView;
+
+        ThumbnailTask(@NonNull Context context,
+                      @NonNull ImageView imageView,
+                      int videoId) {
+            this.weakReference = new WeakReference<>(context);
+            this.weakImageView = new WeakReference<>(imageView);
+            this.videoId = videoId;
+        }
+
+        @Override
+        protected VimeoThumbnail doInBackground(Void... voids) {
+            String url = "https://vimeo.com/api/oembed.json?url=https://player.vimeo.com/video/" + videoId;
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).build();
+            VimeoThumbnail vimeoThumbnail = null;
+            try {
+                Response response = client.newCall(request).execute();
+                ResponseBody body = response.body();
+                if (body != null) {
+                    vimeoThumbnail = new Gson().fromJson(body.string(), VimeoThumbnail.class);
+                }
+            } catch (Exception e) {
+                Context context = weakReference.get();
+                if (context != null) {
+                    Log.e(context.getPackageName(), e.toString());
+                }
+            }
+            return vimeoThumbnail;
+        }
+
+        @Override
+        protected void onPostExecute(VimeoThumbnail vimeoThumbnail) {
+            super.onPostExecute(vimeoThumbnail);
+            Context context = weakReference.get();
+            ImageView imageView = weakImageView.get();
+            if (vimeoThumbnail != null && vimeoThumbnail.thumbnailUrl != null && context != null && imageView != null) {
+                RequestOptions options = new RequestOptions()
+                        .priority(Priority.NORMAL)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+                Glide.with(context)
+                        .load(vimeoThumbnail.thumbnailUrl)
+                        .apply(options)
+                        .into(imageView);
+            }
+        }
+    }
 }

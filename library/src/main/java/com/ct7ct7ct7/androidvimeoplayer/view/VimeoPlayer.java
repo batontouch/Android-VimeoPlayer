@@ -285,14 +285,7 @@ public class VimeoPlayer extends WebView {
     }
 
     public void reset(final PlayerState playerState, final float playAt) {
-        switch (playerState) {
-            case PLAYING: {
-                vimeoOptions.autoPlay = true;
-            }
-            default: {
-                vimeoOptions.autoPlay = false;
-            }
-        }
+        vimeoOptions.autoPlay = playerState == PlayerState.PLAYING;
 
         if (resetReadyListener != null) {
             jsBridge.removeLastReadyListener(resetReadyListener);
